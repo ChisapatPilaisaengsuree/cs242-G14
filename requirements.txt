@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+<<<<<<< HEAD
 streamlit
 sqlalchemy
 folium
@@ -7,3 +8,7 @@ streamlit-folium
 requests
 python-dotenv
 flask
+=======
+sqlalchemy
+pydantic
+>>>>>>> f56e481 (first commit)
