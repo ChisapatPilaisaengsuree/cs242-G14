@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# import router
+# import routers
 from api.search import router as search_router
+from api.restroom import router as restroom_router
 
 # สร้าง app
 app = FastAPI(
     title="Restroom Finder API",
-    description="API สำหรับค้นหาห้องน้ำ",
+    description="API สำหรับค้นหาห้องน้ำในมหาวิทยาลัย",
     version="1.0.0"
 )
 
@@ -23,9 +24,18 @@ app.add_middleware(
 )
 
 # =========================
-# 🔌 Include Router
+# 🔌 Include Routers
 # =========================
 app.include_router(search_router, prefix="/api")
+app.include_router(restroom_router, prefix="/api")
+
+# =========================
+# 🌱 Startup — สร้าง DB + seed ข้อมูล
+# =========================
+@app.on_event("startup")
+def startup_event():
+    from database.init_db import init_db
+    init_db()
 
 # =========================
 # 🏠 Root Endpoint
@@ -33,7 +43,8 @@ app.include_router(search_router, prefix="/api")
 @app.get("/")
 def root():
     return {
-        "message": "Restroom Finder Backend is running 🚀"
+        "message": "Restroom Finder Backend is running 🚀",
+        "docs": "/docs",
     }
 
 # =========================
@@ -41,6 +52,4 @@ def root():
 # =========================
 @app.get("/health")
 def health_check():
-    return {
-        "status": "ok"
-    }
+    return {"status": "ok"}

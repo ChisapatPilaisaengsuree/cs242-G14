@@ -1,4 +1,5 @@
 fastapi
+<<<<<<< HEAD
 uvicorn
 <<<<<<< HEAD
 streamlit
@@ -12,3 +13,9 @@ flask
 sqlalchemy
 pydantic
 >>>>>>> f56e481 (first commit)
+=======
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-dotenv
+>>>>>>> 75b8d94 (uddate)

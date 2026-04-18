@@ -1,8 +1,23 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "sqlite:///./restroom.db"
+# อ่านจาก environment variable ถ้ามี ไม่งั้นใช้ SQLite local
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./restroom.db")
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+
+def get_db():
+    """Dependency สำหรับ FastAPI — ให้ใช้ Depends(get_db)"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
