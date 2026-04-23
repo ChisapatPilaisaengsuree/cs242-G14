@@ -25,14 +25,6 @@ def init_db():
         # ============================================================
         sample_data = [
             # --- ตึก SC3 ---
-            Restroom(
-                building="SC3",       # ชื่อตึก
-                floor=1,              # ชั้น
-                type="female",        # ประเภท: male / female / disabled
-                latitude=13.7467,     # พิกัด GPS (ละติจูด)
-                longitude=100.5331,   # พิกัด GPS (ลองจิจูด)
-                crowd_level="low",    # ความแออัดเริ่มต้น (จะถูก predict ทับ)
-            ),
             Restroom(building="SC3", floor=1, type="male",     latitude=13.7467, longitude=100.5331, crowd_level="low"),
             Restroom(building="SC3", floor=2, type="female",   latitude=13.7467, longitude=100.5331, crowd_level="medium"),
             Restroom(building="SC3", floor=2, type="male",     latitude=13.7467, longitude=100.5331, crowd_level="medium"),
