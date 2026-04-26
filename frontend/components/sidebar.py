@@ -12,11 +12,11 @@ def render_sidebar():
         st.page_link("pages/reports.py", label="รายงาน")
         
         st.markdown("**อาคาร**")
-        buildings = ["SC1", "SC2", "SC3", "ยิม7", "บร"]
-        for b in buildings:
-            # สมมติว่ามีหน้าแยกรายอาคาร
-            st.page_link("pages/overview.py", label=f" {b}")
+        st.page_link("pages/sc1.py", label="SC1")
+        st.page_link("pages/sc2.py", label="SC2")
+        st.page_link("pages/sc3.py", label="SC3")
+        st.page_link("pages/gym7.py", label="ยิม7")
+        st.page_link("pages/boro.py", label="บร")
             
         st.markdown("**ตั้งค่า**")
-        st.page_link("pages/overview.py", label="จัดการผู้ใช้")
         st.page_link("pages/overview.py", label="ระบบ")
