@@ -1,3 +1,8 @@
+import sys
+import os
+
+# บรรทัดนี้จะช่วยให้ Python หาโฟลเดอร์ components เจอ
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -5,6 +10,9 @@ from datetime import datetime
 # นำเข้า Components ที่เราแยกไว้
 from components.sidebar import render_sidebar
 from components.card import inject_custom_css, render_metric_card
+
+st.set_page_config(layout="wide", initial_sidebar_state="expanded")
+inject_custom_css()
 
 def get_current_thai_datetime():
     now = datetime.now()

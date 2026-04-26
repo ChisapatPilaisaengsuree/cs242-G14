@@ -197,6 +197,81 @@ def inject_custom_css():
             align-items: center;
             margin-bottom: 22px;
         }
+
+        /* --- การ์ดห้องน้ำ (Restroom Grid Card) --- */
+        .restroom-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .gender-tag {
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tag-male { background: #e0f2fe; color: #0369a1; }
+        .tag-female { background: #fdf2f8; color: #be185d; }
+        .tag-total { background: #f3f4f6; color: #374151; }
+
+        /* หลอด Progress ขนาดใหญ่ในการ์ด */
+        .card-progress-bg {
+            background: #eee;
+            height: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .card-progress-fill { height: 100%; border-radius: 6px; }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+        }
+
+        [data-testid="stSidebarNav"] {
+            display: none !important;
+        }
+
+        /* --- ปรับสีปุ่ม Primary (ปุ่ม "ทั้งหมด") --- */
+        button[kind="primary"] {
+            background-color: #111827 !important; /* สีดำเข้ม */
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* เอฟเฟกต์ตอนเอาเมาส์ไปชี้ (Hover) */
+        button[kind="primary"]:hover {
+            background-color: #374151 !important; /* สีเทาเข้มขึ้นนิดนึง */
+            border-color: #374151 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* ปรับสีปุ่มธรรมดา (ชาย / หญิง) ให้ดูคลีนเข้ากัน */
+        button[kind="secondary"] {
+            border: 1px solid #e5e7eb !important;
+            border-radius: 8px !important;
+            background-color: white !important;
+            color: #374151 !important;
+        }
     </style>
     """, unsafe_allow_html=True)
 
