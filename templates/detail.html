@@ -1,6 +1,142 @@
-<h1>รายละเอียด</h1>
+{% extends "base.html" %}
+{% set active_page = '' %}
+{% block title %}{{ toilet.name }}{% endblock %}
 
-<p>{{ toilet.name }}</p>
-<p>สถานะ: {{ toilet.status }}</p>
+{% block content %}
+<div class="detail-wrap">
+  <a href="javascript:history.back()" class="back-btn">← กลับ</a>
 
-<a href="/home">กลับ</a>
+  {% set gc = get_gender_color(toilet.gender) %}
+  {% set gi = get_gender_icon(toilet.gender) %}
+  {% set gl = get_gender_label(toilet.gender) %}
+  {% set sc = get_status_color(toilet.occupancy) %}
+  {% set sl = get_status_label(toilet.occupancy) %}
+
+  <!-- Header -->
+  <div class="det-head">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="det-icon" style="background:{{ gc }}15;border:2px solid {{ gc }}33;color:{{ gc }}">{{ gi }}</div>
+      <div>
+        <div style="font-size:19px;font-weight:800;color:var(--t);margin-bottom:6px">{{ toilet.name }}</div>
+        <div>
+          <span class="atag" style="color:{{ gc }};border-color:{{ gc }}55">{{ gi }} {{ gl }}</span>
+          <span class="atag">📍 {{ toilet.distance }} ม.</span>
+          <span class="atag">{{ toilet.floor }}</span>
+          <span class="badge" style="background:{{ sc }}18;color:{{ sc }};border:1.5px solid {{ sc }}44">{{ sl }}</span>
+        </div>
+      </div>
+    </div>
+    <button class="fav-b {% if is_fav %}active{% endif %}" id="fav-btn" onclick="toggleFav()">
+      {{ '★' if is_fav else '☆' }}
+    </button>
+  </div>
+
+  <!-- Status box -->
+  <div style="background:{{ sc }}10;border:1.5px solid {{ sc }}44;border-radius:15px;padding:16px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+      <span style="font-weight:800;font-size:13px;color:var(--t)">สถานะปัจจุบัน</span>
+      <span style="color:{{ sc }};font-weight:700;font-size:12px">● {{ sl }}</span>
+    </div>
+    <div class="occ-wrap"><div class="occ-bar" style="width:{{ toilet.occupancy }}%;background:{{ sc }}"></div></div>
+    <div class="occ-pct">{{ toilet.occupancy }}% ถูกใช้งาน</div>
+  </div>
+
+  <!-- Info grid -->
+  <div class="ig">
+    <div class="ic">
+      <div style="font-size:18px;margin-bottom:5px">🏢</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t)">{{ toilet.place_name }}</div>
+      <div style="font-size:10px;color:var(--m);margin-top:2px">อาคาร</div>
+    </div>
+    <div class="ic">
+      <div style="font-size:18px;margin-bottom:5px">🏗️</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t)">{{ toilet.floor }}</div>
+      <div style="font-size:10px;color:var(--m);margin-top:2px">ชั้น</div>
+    </div>
+    <div class="ic">
+      <div style="font-size:18px;margin-bottom:5px">📍</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t)">{{ toilet.distance }} ม.</div>
+      <div style="font-size:10px;color:var(--m);margin-top:2px">ระยะ</div>
+    </div>
+    <div class="ic">
+      <div style="font-size:18px;margin-bottom:5px">🚶</div>
+      <div style="font-size:14px;font-weight:700;color:var(--t)">{{ toilet.capacity }} ที่</div>
+      <div style="font-size:10px;color:var(--m);margin-top:2px">ความจุ</div>
+    </div>
+  </div>
+
+  <!-- Amenities -->
+  <div class="cb">
+    <div class="cb-title">สิ่งอำนวยความสะดวก</div>
+    <span class="atag">🪥 อ่างล้างมือ</span>
+    <span class="atag">🧴 สบู่</span>
+    <span class="atag">🖐️ เครื่องเป่ามือ</span>
+    <span class="atag">♿ ผู้พิการ</span>
+    <span class="atag">🪞 กระจก</span>
+  </div>
+
+  <!-- Rating -->
+  <div class="cb">
+    <div class="cb-title">ให้คะแนน</div>
+    <div style="display:flex;gap:5px;justify-content:center;margin-bottom:6px" id="stars-wrap">
+      {% for s in range(1, 6) %}
+      <span class="star-b" data-s="{{ s }}"
+            style="color:{{ '#f59e0b' if s <= rating else '#d1d1d6' }}"
+            onmouseover="hoverStar({{ s }})" onmouseout="hoverStar(0)"
+            onclick="rateStar({{ s }})">★</span>
+      {% endfor %}
+    </div>
+    <div id="thx-msg" style="text-align:center;font-size:12px;color:var(--acc);display:{{ 'block' if rating else 'none' }}">
+      ขอบคุณสำหรับการให้คะแนน! 🙏
+    </div>
+  </div>
+
+  <!-- Google Maps button -->
+  <a href="{{ mapsurl }}" target="_blank" class="nav-big">
+    📍 เปิด Google Maps นำทาง
+  </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var currentRating = {{ rating }};
+var toiletId = {{ toilet.id }};
+
+function hoverStar(s) {
+  document.querySelectorAll('.star-b').forEach(function(el, i) {
+    var active = s ? i + 1 <= s : i + 1 <= currentRating;
+    el.style.color = active ? '#f59e0b' : '#d1d1d6';
+    el.style.transform = active ? 'scale(1.15)' : 'none';
+  });
+}
+
+function rateStar(s) {
+  currentRating = s;
+  hoverStar(0);
+  document.getElementById('thx-msg').style.display = 'block';
+  fetch('/api/rate/' + toiletId, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({star: s})
+  });
+}
+
+function toggleFav() {
+  fetch('/api/favorite/' + toiletId, {method: 'POST'})
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      var btn = document.getElementById('fav-btn');
+      if (d.added) {
+        btn.textContent = '★';
+        btn.classList.add('active');
+        showToast('⭐ เพิ่มในรายการโปรด');
+      } else {
+        btn.textContent = '☆';
+        btn.classList.remove('active');
+        showToast('🗑️ เอาออกจากรายการโปรด');
+      }
+    });
+}
+</script>
+{% endblock %}

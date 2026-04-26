@@ -101,8 +101,8 @@ def search():
 @app.route("/detail/<int:tid>")
 @login_required
 def detail(tid):
-    t = next((x for x in flat() if x["id"] == tid), None)
-    if not t:
+    toilet = next((x for x in flat() if x["id"] == tid), None)
+    if not toilet:
         return redirect(url_for("home"))
     favs    = session.get("favorites", [])
     ratings = session.get("ratings", {})
@@ -110,11 +110,11 @@ def detail(tid):
     rating  = ratings.get(str(tid), 0)
     return render_template("detail.html",
         user=session["user"],
-        t=t,
+        toilet=toilet,
         is_fav=is_fav,
         rating=rating,
         last_updated=_last_updated,
-        maps_url=maps_url(t["lat"], t["lng"]),
+        mapsurl=maps_url(toilet["lat"], toilet["lng"]),
         get_status_color=get_status_color,
         get_status_label=get_status_label,
         get_gender_icon=get_gender_icon,
