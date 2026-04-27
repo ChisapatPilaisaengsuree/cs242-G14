@@ -104,6 +104,10 @@ def inject_custom_css():
             display: none !important;
         }
 
+        [data-testid="stSidebarNavItems"] {
+                padding-top: 0 !important;
+        }
+        
         /* --- ตารางแบบไม่มีเส้น (Clean Table) --- */
         .table-container {
             border-radius: 12px; 
