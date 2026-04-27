@@ -3,7 +3,7 @@ import streamlit as st
 def render_sidebar():
     with st.sidebar:
         # ใช้ markdown แทน title เพื่อให้ปรับตำแหน่งให้ตรงกับหน้าหลักได้ง่ายขึ้น
-        st.markdown("<h2 style='margin-top:0; padding-top:0;'>RestroomAdmin</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='margin-top:0; padding-top:0;'>🚻 ToiletFinder</h2>", unsafe_allow_html=True)
         st.divider()
         
         st.markdown("**หลัก**")

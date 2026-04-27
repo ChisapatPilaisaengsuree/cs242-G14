@@ -2,7 +2,7 @@ import streamlit as st
 from components.login import render_login_form # เรียกจากโฟลเดอร์ components
 
 # ตั้งค่าหน้าจอ
-st.set_page_config(page_title="RestroomAdmin", layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="ToiletFinder", layout="centered", initial_sidebar_state="collapsed")
 
 # สร้างคอลัมน์กึ่งกลาง
 col1, col2, col3 = st.columns([0.7, 2.6, 0.7])

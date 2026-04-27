@@ -36,30 +36,43 @@ def inject_custom_css():
         }
         .metric-card {
             background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 12px 16px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+            border: 2px solid #f1f5f9;
+            border-radius: 16px;
+            padding: 15px 19px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.03);
             margin-top: -15px;
+            transition: transform 0.2s ease;
         }
-        .metric-title { font-size: 14px; color: #666; font-family: sans-serif;}
-        .metric-val-green { font-size: 28px; font-weight: bold; color: #2e7d32; margin: 0px; line-height: 1.2;}
-        .metric-val-orange { font-size: 28px; font-weight: bold; color: #ef6c00; margin: 0px; line-height: 1.2;}
-        .metric-val-red { font-size: 28px; font-weight: bold; color: #c62828; margin: 0px; line-height: 1.2;}
-        .metric-val-black { font-size: 28px; font-weight: bold; color: #212121; margin: 0px; line-height: 1.2;}
-        .metric-sub { font-size: 11px; color: #999; margin-top: 5px;}
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-title { font-size: 13px; color: #64748b;font-weight: 500; font-family: sans-serif;}
+        .metric-val-purple { font-size: 32px; font-weight: 800; color: #7e57c2; margin: 0; line-height: 1.1; }
+        .metric-val-green { font-size: 32px; font-weight: 800; color: #10b981; margin: 0; line-height: 1.1; }
+        .metric-val-orange { font-size: 32px; font-weight: 800; color: #f59e0b; margin: 0; line-height: 1.1; }
+        .metric-val-red { font-size: 32px; font-weight: 800; color: #ef4444; margin: 0; line-height: 1.1; }
+        .metric-sub { font-size: 11px; color: #94a3b8; margin-top: 8px; font-weight: 400; }
+        .metric-val-black {
+            font-size: 32px !important;      
+            font-weight: 800 !important;     
+            color: #000000 !important;     
+            margin: 0 !important;      
+            line-height: 1.1 !important;
+        }
 
         /* --- ช่องค้นหา (Search Input) --- */
         div[data-baseweb="input"] {
-            border-radius: 20px !important;
-            border: 1px solid #d1d5db !important;
-            background-color: #f9fafb !important;
+            border-radius: 15px !important;
+            border: 1px solid #e2e8f0 !important;
+            background-color: #f8fafc !important;
             transition: all 0.3s ease;
-            min-height: 34px !important;
+            min-height: 40px !important;
         }
         div[data-baseweb="input"]:focus-within {
-            border-color: #2e7d32 !important;
-            box-shadow: 0 0 5px rgba(46, 125, 50, 0.2) !important;
+            border-color: #7e57c2 !important;
+            box-shadow: 0 0 3px rgba(126, 87, 194, 0.1) !important;
             background-color: #ffffff !important;
         }
         div[data-baseweb="input"] input {
@@ -69,20 +82,21 @@ def inject_custom_css():
 
         /* --- ปุ่มออกจากระบบ (Logout Button) --- */
         .logout-btn {
-            background-color: #ffffff;
-            border: 1px solid #d1d5db;
-            border-radius: 20px;
-            padding: 6px 16px;
+            background-color: transparent;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 8px 16px;
             font-size: 14px;
-            color: #4b5563;
+            color: #64748b;
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: inherit;
+            text-align: center;
         }
         .logout-btn:hover {
-            background-color: #f3f4f6;
-            border-color: #9ca3af;
-            color: #1f2937;
+            background-color: #fee2ee;
+            border-color: #fecaca;
+            color: #ef4444;
         }
 
         /* --- ซ่อนเมนูนำทางอัตโนมัติของ Streamlit (app, overview) --- */
@@ -103,17 +117,16 @@ def inject_custom_css():
             font-size: 14px;
         }
         .clean-table th {
-            color: #1f2937;
-            font-weight: bold;
-            background-color: #f3f4f6;
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 2px solid #e5e7ed; 
+            background-color: #f8fafc;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0;
         }
         .clean-table td {
-            padding: 16px 8px; 
-            color: #333;
-            border-bottom: 2px solid #f9fafb; 
+            border-bottom: 1px solid #f1f5f9;
+            padding: 16px 12px;
         }
         
         /* เพิ่มเอฟเฟกต์ตอนเอาเมาส์ไปชี้แถว */
@@ -122,12 +135,12 @@ def inject_custom_css():
             border-radius: 8px;
         }
 
-        .info-box {
-            background-color: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 320px;
+        .info-box, .restroom-card {
+            background-color: white !important;
+            border: 2px solid #f1f5f9 !important;
+            border-radius: 20px !important;
+            padding: 24px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
         }
         .info-header {
             display: flex;
@@ -199,14 +212,7 @@ def inject_custom_css():
         }
 
         /* --- การ์ดห้องน้ำ (Restroom Grid Card) --- */
-        .restroom-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid #f0f0f0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
+        
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -250,27 +256,30 @@ def inject_custom_css():
 
         /* --- ปรับสีปุ่ม Primary (ปุ่ม "ทั้งหมด") --- */
         button[kind="primary"] {
-            background-color: #111827 !important; /* สีดำเข้ม */
+            background-color: #7e57c2 !important; /* สีม่วงหลัก */
             color: white !important;
             border: none !important;
-            border-radius: 8px !important;
-            padding: 0.5rem 1rem !important;
-            transition: all 0.2s ease !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
         }
 
         /* เอฟเฟกต์ตอนเอาเมาส์ไปชี้ (Hover) */
         button[kind="primary"]:hover {
-            background-color: #374151 !important; /* สีเทาเข้มขึ้นนิดนึง */
-            border-color: #374151 !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            background-color: #6a49a9 !important;
+            box-shadow: 0 4px 12px rgba(126, 87, 194, 0.3) !important;
+            transform: translateY(-1px);
         }
         
         /* ปรับสีปุ่มธรรมดา (ชาย / หญิง) ให้ดูคลีนเข้ากัน */
         button[kind="secondary"] {
-            border: 1px solid #e5e7eb !important;
-            border-radius: 8px !important;
-            background-color: white !important;
-            color: #374151 !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            color: #4b5563 !important;
+        }
+        button[kind="secondary"]:hover {
+            border-color: #7e57c2 !important;
+            color: #7e57c2 !important;
         }
     </style>
     """, unsafe_allow_html=True)

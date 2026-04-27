@@ -13,7 +13,7 @@ def render_login_form():
 
         /* พื้นหลังหน้าจอ: สีเทาอ่อนเรียบๆ */
         .stApp {
-            background-color: #f3f4f6 !important;
+            background-color: #f8fafc !important;
         }
 
         /* ล็อคหน้าจอไม่ให้เลื่อน */
@@ -25,7 +25,7 @@ def render_login_form():
         /* --- จัดการกรอบ Login ให้สวยและเหลือกรอบเดียว --- */
         [data-testid="stColumn"]:nth-of-type(2) {
             background-color: white !important;
-            border: 3px solid #111827 !important; /* กรอบดำหนากำลังดี */
+            border: 2px solid #111827 !important; /* กรอบดำหนากำลังดี */
             border-radius: 24px !important;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
             padding: 60px 30px !important;
@@ -65,8 +65,9 @@ def render_login_form():
             margin-top: 25px;
         }
         div.stButton > button {
-            background-color: #111827 !important;
+            background-color: #7e57c2 !important;
             color: white !important;
+            width: 100% !important;
             padding: 0 45px !important;
             border-radius: 12px !important;
             height: 50px !important;
@@ -84,7 +85,7 @@ def render_login_form():
     # --- ไม่ต้องใส่ border=True ใน container แล้ว ---
     with st.container(): 
         # ส่วนหัว (Typography สวยๆ)
-        st.markdown("<h2 style='text-align: center; margin-top: 10px; color: #111827; font-weight: 800; letter-spacing: -1px;'>RestroomAdmin</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; margin-top: 10px; color: #111827; font-weight: 800; letter-spacing: -1px;'>ToiletFinder</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 40px;'>ระบบจัดการห้องน้ำส่วนกลางมหาวิทยาลัย</p>", unsafe_allow_html=True)
         
         # ฟอร์มกรอกข้อมูล
