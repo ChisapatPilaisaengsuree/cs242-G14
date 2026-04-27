@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% set active_page = 'search' %}
+{% block title %}ค้นหา{% endblock %}
+
+{% block content %}
+<div class="pg-title">🔍 ค้นหาห้องน้ำ</div>
+
+<!-- Search box -->
+<form method="GET" action="{{ url_for('search') }}" id="search-form">
+  <div class="search-box">
+    <span style="color:var(--m);font-size:16px">🔍</span>
+    <input type="text" name="q" value="{{ q }}" placeholder="ชื่อห้องน้ำ หรืออาคาร..."
+           id="search-input" autocomplete="off">
+    <input type="hidden" name="filter" id="filter-hidden" value="{{ gender_filter }}">
+  </div>
+</form>
+
+<!-- Filter chips -->
+<div class="chip-row">
+  {% for val, label, cls in [('All','ทั้งหมด',''), ('Female','♀ หญิง','female'), ('Male','♂ ชาย','male'), ('Disabled','♿ คนพิการ','dis')] %}
+  <button type="button" class="chip {{ cls }} {% if gender_filter == val %}active{% endif %}"
+          onclick="setFilter('{{ val }}')">{{ label }}</button>
+  {% endfor %}
+</div>
+
+<div class="pg-sub">{{ results|length }} รายการที่พบ</div>
+
+<!-- Results grid -->
+{% if results %}
+<div class="search-grid">
+  {% for t in results %}
+    {% set gc = get_gender_color(t.gender) %}
+    {% set gi = get_gender_icon(t.gender) %}
+    {% set gl = get_gender_label(t.gender) %}
+    {% set sc = get_status_color(t.occupancy) %}
+    {% set sl = get_status_label(t.occupancy) %}
+    <a href="{{ url_for('detail', tid=t.id) }}" class="s-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:13px;color:var(--t);margin-bottom:3px">{{ t.name }}</div>
+          <div style="font-size:11px;color:var(--m);display:flex;gap:5px;flex-wrap:wrap">
+            <span style="color:{{ gc }};font-weight:600">{{ gi }} {{ gl }}</span>
+            <span>·</span><span>{{ t.distance }} ม.</span>
+            <span>·</span><span>{{ t.place_name }}</span>
+          </div>
+        </div>
+        <span class="badge" style="background:{{ sc }}18;color:{{ sc }};border:1.5px solid {{ sc }}44">{{ sl }}</span>
+      </div>
+      <div class="occ-wrap"><div class="occ-bar" style="width:{{ t.occupancy }}%;background:{{ sc }}"></div></div>
+      <div class="occ-pct">{{ t.occupancy }}% ถูกใช้งาน</div>
+    </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  <div class="empty-icon">🚽</div>
+  <div>ไม่พบห้องน้ำ</div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+var currentFilter = '{{ gender_filter }}';
+
+function setFilter(val) {
+  currentFilter = val;
+  document.getElementById('filter-hidden').value = val;
+  // Update chip styles
+  document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('search-form').submit();
+}
+
+// Live search on type
+var timer;
+document.getElementById('search-input').addEventListener('input', function() {
+  clearTimeout(timer);
+  timer = setTimeout(function() {
+    document.getElementById('search-form').submit();
+  }, 350);
+});
+</script>
+{% endblock %}
