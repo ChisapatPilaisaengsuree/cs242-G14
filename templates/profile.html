@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% set active_page = 'profile' %}
+{% block title %}โปรไฟล์{% endblock %}
+
+{% block content %}
+<div class="pg-title">👤 โปรไฟล์</div>
+
+<!-- Profile header -->
+<div class="ph">
+  <div class="av-lg">{{ user.name[0] }}</div>
+  <div>
+    <div style="font-size:18px;font-weight:800;color:var(--t)">{{ user.name }}</div>
+    <div style="font-size:12px;color:var(--m);margin-top:3px">{{ user.email }}</div>
+    <div style="margin-top:9px">
+      <span style="color:#16a34a;font-weight:700;font-size:11px">● ออนไลน์</span>
+      {% if user.role == 'admin' %}
+      <span class="adm-tag" style="margin-left:8px">🛡️ Admin</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stat-grid">
+  <div class="stat-card">
+    <div style="font-size:22px;margin-bottom:5px">🚶</div>
+    <div style="font-size:20px;font-weight:800;color:var(--t)">42</div>
+    <div style="font-size:10px;color:var(--m);margin-top:3px">ครั้งที่ใช้</div>
+  </div>
+  <div class="stat-card">
+    <div style="font-size:22px;margin-bottom:5px">⭐</div>
+    <div style="font-size:20px;font-weight:800;color:var(--t)">{{ fav_count }}</div>
+    <div style="font-size:10px;color:var(--m);margin-top:3px">ห้องโปรด</div>
+  </div>
+  <div class="stat-card">
+    <div style="font-size:22px;margin-bottom:5px">♀</div>
+    <div style="font-size:20px;font-weight:800;color:var(--t)">หญิง</div>
+    <div style="font-size:10px;color:var(--m);margin-top:3px">เพศ</div>
+  </div>
+</div>
+
+<!-- History -->
+<div class="sh">ประวัติการใช้งาน</div>
+{% for name, time_str, stars in [
+    ('SC3 ชั้น2 - หญิง', 'วันนี้ 09:32', '★★★★★'),
+    ('ยิม7 - หญิง', 'เมื่อวาน 14:15', '★★★★☆'),
+    ('บร5 ชั้น2 - หญิง', '20 เม.ย. 11:00', '★★★☆☆'),
+] %}
+<div class="history-row">
+  <div>
+    <div style="font-size:13px;font-weight:600;color:var(--t)">{{ name }}</div>
+    <div style="font-size:10px;color:var(--m);margin-top:2px">{{ time_str }}</div>
+  </div>
+  <div style="color:#f59e0b;font-size:13px">{{ stars }}</div>
+</div>
+{% endfor %}
+
+<!-- Settings -->
+<div class="sh" style="margin-top:18px">การตั้งค่า</div>
+{% for label in ['แจ้งเตือนเมื่อห้องน้ำว่าง', 'โหมดมืด', 'ภาษา: ไทย'] %}
+<div class="setr">
+  <span style="font-size:13px;color:var(--t)">{{ label }}</span>
+  <span style="color:var(--m);font-size:16px">›</span>
+</div>
+{% endfor %}
+{% endblock %}

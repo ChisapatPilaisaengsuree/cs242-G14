@@ -18,5 +18,3 @@ def render_sidebar():
         st.page_link("pages/gym7.py", label="ยิม7")
         st.page_link("pages/boro.py", label="บร")
             
-        st.markdown("**ตั้งค่า**")
-        st.page_link("pages/overview.py", label="ระบบ")

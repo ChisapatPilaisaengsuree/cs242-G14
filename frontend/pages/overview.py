@@ -40,24 +40,41 @@ render_sidebar()
 inject_custom_css()
 
 # --- ส่วนหัว ---
-col_header1, col_header2, col_header3 = st.columns([2, 1, 1])
+# แบ่งเป็น 4 คอลัมน์รวดเดียว (ลดการซ้อนกัน และขยายพื้นที่ปุ่มให้ข้อความไม่ตกบรรทัด)
+col_header1, col_spacer, col_header2, col_header3, col_header4 = st.columns([3.5, 1.0, 2.5, 1.5, 1.5], vertical_alignment="center")
+
 with col_header1:
-    st.subheader("ภาพรวมระบบ")
-    st.caption(f"{current_date}")
+    st.markdown("<div style='font-size: 24px; font-weight: bold; margin-top: 20px; margin-bottom: -5px;'>ภาพรวม</div>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: #94a3b8; font-size: 14px; margin-top: 5px; margin-bottom: 0;'>{current_date}</p>", unsafe_allow_html=True)
+
+with col_spacer:
+    # ไม่ต้องใส่อะไรเลย ปล่อยว่างไว้เพื่อดันที่
+    st.empty()
+
 with col_header2:
-    search_query = st.text_input(" ค้นหาห้องน้ำ...", placeholder="พิมพ์ชื่อห้องน้ำ", label_visibility="collapsed")
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+    search_query = st.text_input("ค้นหาห้องน้ำ...", placeholder="พิมพ์ชื่อห้องน้ำ...", label_visibility="collapsed")
+
 with col_header3:
-    st.markdown(f"<div style='text-align: right; color: gray; margin-top: 5px;'>🟢 Live &nbsp; | &nbsp; {current_time} &nbsp; | &nbsp; <button class='logout-btn'>ออกจากระบบ</button></div>", unsafe_allow_html=True)
+    # 🎨 ใช้ Flexbox บังคับความสูงให้เท่ากับกล่องค้นหา (40px) ข้อความจะได้อยู่กึ่งกลางเป๊ะ
+    st.markdown(f"""
+        <div style='display: flex; justify-content: flex-end; align-items: center; height: 40px; color: #64748b; font-size: 14px; font-weight: 500;'>
+            🟢 Live &nbsp;|&nbsp; {current_time}
+        </div>
+    """, unsafe_allow_html=True)
 
-
+with col_header4:
+    # พื้นที่กว้างขึ้น ปุ่มจะไม่ตกบรรทัดแล้ว
+    if st.button("ออกจากระบบ", use_container_width=True):
+        st.session_state.clear()
+        st.switch_page("app.py") # ⚠️ เปลี่ยนตรงนี้เป็นชื่อไฟล์หน้า Login ของคุณ
+st.write("---")
 # --- การ์ดสรุปข้อมูล ---
 col1, col2, col3, col4 = st.columns(4)
 with col1: render_metric_card("ว่าง", "4", "ห้องน้ำ", "metric-val-green")
 with col2: render_metric_card("ค่อนข้างเต็ม", "2", "ห้องน้ำ", "metric-val-orange")
 with col3: render_metric_card("เต็ม / วิกฤต", "2", "ห้องน้ำ", "metric-val-red")
 with col4: render_metric_card("เฉลี่ยการใช้งาน", "50%", "วันนี้", "metric-val-black")
-
-st.write("---")
 
 # --- ตารางข้อมูล (แบบไม่มีเส้น และปรับสีตามสถานะ) ---
 st.markdown("<div style='font-size: 18px; font-weight: bold; margin-top: 15px; margin-bottom: 10px;'>รายการห้องน้ำ</div>", unsafe_allow_html=True)

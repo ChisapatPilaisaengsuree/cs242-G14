@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>🚻 ToiletFinder — เข้าสู่ระบบ</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+
+<div class="auth-wrap">
+
+  <!-- Left brand panel (desktop only) -->
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="auth-bigicon">🚻</div>
+      <div class="auth-brand-title">ToiletFinder</div>
+      <div class="auth-brand-sub">มหาวิทยาลัยธรรมศาสตร์ รังสิต<br>ค้นหาห้องน้ำใกล้คุณ แบบ Real-time</div>
+    </div>
+    <div class="auth-features">
+      <div class="auth-feat"><div class="auth-feat-dot"></div>ตรวจสอบสถานะห้องน้ำแบบ Real-time</div>
+      <div class="auth-feat"><div class="auth-feat-dot"></div>นำทางด้วย Google Maps</div>
+      <div class="auth-feat"><div class="auth-feat-dot"></div>รองรับทุกอาคารในมธ.รังสิต</div>
+    </div>
+  </div>
+
+  <!-- Right / Mobile form panel -->
+  <div class="auth-right">
+
+    <!-- Icon + title (mobile only, hidden on desktop via CSS) -->
+    <div class="auth-mobile-top" style="display:none">
+      <div style="font-size:52px;margin-bottom:8px">🚻</div>
+      <div class="auth-form-title">ToiletFinder</div>
+      <div class="auth-form-sub">มหาวิทยาลัยธรรมศาสตร์ รังสิต</div>
+    </div>
+
+    <!-- Desktop title (hidden on mobile via CSS) -->
+    <div class="auth-desktop-title">
+      <div class="auth-form-title">เข้าสู่ระบบ</div>
+      <div class="auth-form-sub" style="margin-bottom:20px">ใส่ข้อมูลบัญชีของคุณเพื่อเริ่มใช้งาน</div>
+    </div>
+
+    <!-- Hint: User only (no Admin) -->
+    <div class="auth-hint">
+      <b>User:</b> user@tu.ac.th / 1234
+    </div>
+
+    {% if error %}
+    <div class="auth-err">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="fi">
+        <label>อีเมล</label>
+        <input type="email" name="email" placeholder="example@tu.ac.th" required autocomplete="email">
+      </div>
+      <div class="fi">
+        <label>รหัสผ่าน</label>
+        <input type="password" name="password" placeholder="••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-login">เข้าสู่ระบบ →</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
