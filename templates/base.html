@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>🚻 ToiletFinder — {% block title %}{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 {% block head %}{% endblock %}
@@ -12,35 +12,39 @@
 
   <!-- ── TOPBAR ── -->
   <div id="topbar">
-    <div class="topbar-logo-zone">
-      <span class="topbar-logo-icon">🚻</span>
-      <span class="topbar-logo-text">ToiletFinder</span>
-    </div>
-    <div class="topbar-center"></div>
-    <div class="topbar-right">
-      <div class="upd-badge">🕐 อัปเดต: <b id="last-upd-text">{{ last_updated }}</b></div>
-      <div class="user-pill">
-        <div class="av">{{ user.name[0] }}</div>
-        <span class="u-name">{{ user.name }}</span>
-        {% if user.role == 'admin' %}<span class="adm-tag">Admin</span>{% endif %}
+    <!-- Desktop row -->
+    <div id="topbar-row-1" style="display:flex;align-items:center;width:100%;height:60px">
+      <div class="topbar-logo-zone">
+        <span class="topbar-logo-icon">🚻</span>
+        <span class="topbar-logo-text">ToiletFinder</span>
       </div>
+      <div class="topbar-center"></div>
+      <div class="topbar-right">
+        <div class="upd-badge">🕐 อัปเดต: <b id="last-upd-text">{{ last_updated }}</b></div>
+        <div class="user-pill">
+          <div class="av">{{ user.name[0] }}</div>
+          <span class="u-name">{{ user.name }}</span>
+        </div>
+        <a href="{{ url_for('logout') }}" class="mobile-logout-btn">🚪</a>
+      </div>
+    </div>
+    <!-- Mobile search bar (shown only on mobile via CSS) -->
+    <div class="mobile-search" style="display:none">
+      <span style="color:var(--m);font-size:14px">🔍</span>
+      <input type="text" placeholder="ค้นหาห้องน้ำ..."
+             onkeydown="if(event.key==='Enter')window.location='/search?q='+this.value"
+             oninput="if(this.value.length>1)window.location='/search?q='+encodeURIComponent(this.value)">
     </div>
   </div>
 
   <div class="body-row">
 
-    <!-- ── SIDEBAR ── -->
+    <!-- ── SIDEBAR (desktop) ── -->
     <div id="sidebar">
       <div class="sb-section">เมนูหลัก</div>
-      <a href="{{ url_for('home') }}"   class="sb-item {% if active_page == 'home' %}active{% endif %}">🗺️ แผนที่ห้องน้ำ</a>
-      <a href="{{ url_for('search') }}" class="sb-item {% if active_page == 'search' %}active{% endif %}">🔍 ค้นหา</a>
+      <a href="{{ url_for('home') }}"    class="sb-item {% if active_page == 'home' %}active{% endif %}">🗺️ แผนที่ห้องน้ำ</a>
+      <a href="{{ url_for('search') }}"  class="sb-item {% if active_page == 'search' %}active{% endif %}">🔍 ค้นหา</a>
       <a href="{{ url_for('profile') }}" class="sb-item {% if active_page == 'profile' %}active{% endif %}">👤 โปรไฟล์</a>
-
-      {% if user.role == 'admin' %}
-      <div class="sb-section">ผู้ดูแล</div>
-      <a href="{{ url_for('admin') }}" class="sb-item admin-item {% if active_page == 'admin' %}active{% endif %}">🛡️ Admin Panel</a>
-      {% endif %}
-
       <div class="sb-footer">
         <a href="{{ url_for('logout') }}" class="sb-item logout">🚪 ออกจากระบบ</a>
       </div>
@@ -52,6 +56,26 @@
     </div>
 
   </div>
+
+  <!-- ── BOTTOM NAV (mobile only) ── -->
+  <div id="bottom-nav">
+    <a href="{{ url_for('home') }}"
+       class="nb {% if active_page == 'home' %}active{% endif %}">
+      <div class="nb-icon">🗺️</div>
+      <span class="nb-lbl">Map</span>
+    </a>
+    <a href="{{ url_for('search') }}"
+       class="nb {% if active_page == 'search' %}active{% endif %}">
+      <div class="nb-icon">🔍</div>
+      <span class="nb-lbl">Search</span>
+    </a>
+    <a href="{{ url_for('profile') }}"
+       class="nb {% if active_page == 'profile' %}active{% endif %}">
+      <div class="nb-icon">👤</div>
+      <span class="nb-lbl">Profile</span>
+    </a>
+  </div>
+
 </div>
 
 <!-- Toast -->

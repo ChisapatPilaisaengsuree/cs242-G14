@@ -2,14 +2,15 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>🚻 ToiletFinder — เข้าสู่ระบบ</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 </head>
 <body>
 
 <div class="auth-wrap">
-  <!-- Left brand panel -->
+
+  <!-- Left brand panel (desktop only) -->
   <div class="auth-left">
     <div class="auth-brand">
       <div class="auth-bigicon">🚻</div>
@@ -20,18 +21,28 @@
       <div class="auth-feat"><div class="auth-feat-dot"></div>ตรวจสอบสถานะห้องน้ำแบบ Real-time</div>
       <div class="auth-feat"><div class="auth-feat-dot"></div>นำทางด้วย Google Maps</div>
       <div class="auth-feat"><div class="auth-feat-dot"></div>รองรับทุกอาคารในมธ.รังสิต</div>
-      <div class="auth-feat"><div class="auth-feat-dot"></div>ระบบ Admin จัดการสถานะ</div>
     </div>
   </div>
 
-  <!-- Right form panel -->
+  <!-- Right / Mobile form panel -->
   <div class="auth-right">
-    <div class="auth-form-title">เข้าสู่ระบบ</div>
-    <div class="auth-form-sub">ใส่ข้อมูลบัญชีของคุณเพื่อเริ่มใช้งาน</div>
 
+    <!-- Icon + title (mobile only, hidden on desktop via CSS) -->
+    <div class="auth-mobile-top" style="display:none">
+      <div style="font-size:52px;margin-bottom:8px">🚻</div>
+      <div class="auth-form-title">ToiletFinder</div>
+      <div class="auth-form-sub">มหาวิทยาลัยธรรมศาสตร์ รังสิต</div>
+    </div>
+
+    <!-- Desktop title (hidden on mobile via CSS) -->
+    <div class="auth-desktop-title">
+      <div class="auth-form-title">เข้าสู่ระบบ</div>
+      <div class="auth-form-sub" style="margin-bottom:20px">ใส่ข้อมูลบัญชีของคุณเพื่อเริ่มใช้งาน</div>
+    </div>
+
+    <!-- Hint: User only (no Admin) -->
     <div class="auth-hint">
-      <b>User:</b> user@tu.ac.th / 1234 &nbsp;&nbsp;
-      <b>Admin:</b> admin@tu.ac.th / admin
+      <b>User:</b> user@tu.ac.th / 1234
     </div>
 
     {% if error %}
