@@ -12,11 +12,11 @@ from data.mock_data import (
 app = Flask(__name__)
 app.secret_key = "toiletfinder-secret-2024"
 
-#  สลับตรงนี้ตอน backend เสร็จ
-USE_API = False
-API_URL = "http://localhost:8000"
+# ใช้ backend จริง
+USE_API = True
+API_URL = "http://localhost:8000/api"
 
-# ── mock state ─────────────────────────────
+# ── mock fallback ─────────────────────────
 _places = [
     {**p, "toilets": [{**t} for t in p["toilets"]]}
     for p in PLACES
@@ -29,18 +29,68 @@ def flat():
 def maps_url(lat, lng):
     return f"https://www.google.com/maps/dir/?api=1&destination={lat},{lng}&travelmode=walking"
 
-# ── helper: ดึง data ───────────────────────
-def get_places():
-    if USE_API:
-        return requests.get(f"{API_URL}/places").json()
-    return _places
+# ── FIX สำคัญอยู่ตรงนี้ ─────────────────
+def convert_crowd(level):
+    return {
+        "low": 20,
+        "medium": 50,
+        "high": 80
+    }.get(level, 0)
 
+def map_data(data):
+    result = []
+    for x in data:
+        # รองรับทั้ง crowd_level และ crowd
+        crowd = x.get("crowd_level") or x.get("crowd") or "low"
+
+        result.append({
+            "id": x["id"],
+            "name": f"{x['building']} ชั้น {x['floor']}",
+            "place_name": x["building"],
+            "gender": x["type"],
+            "occupancy": convert_crowd(crowd),
+            "lat": x["latitude"],
+            "lng": x["longitude"]
+        })
+    return result
+
+# ── helper ───────────────────────────────
 def get_all_toilets():
     if USE_API:
-        return requests.get(f"{API_URL}/toilets").json()
+        try:
+            res = requests.get(f"{API_URL}/restrooms")
+            return map_data(res.json())
+        except Exception as e:
+            print("API error:", e)
+            return []
     return flat()
 
-# ── Auth ──────────────────────────────────
+def get_toilet(tid):
+    if USE_API:
+        try:
+            res = requests.get(f"{API_URL}/restrooms/{tid}")
+            return map_data([res.json()])[0]
+        except Exception as e:
+            print("Detail error:", e)
+            return None
+    data = flat()
+    return next((x for x in data if x["id"] == tid), None)
+
+def search_toilets(q):
+    if USE_API:
+        try:
+            res = requests.post(f"{API_URL}/search", json={"keyword": q})
+            return map_data(res.json())
+        except Exception as e:
+            print("Search error:", e)
+            return []
+    data = flat()
+    return [
+        t for t in data
+        if q.lower() in t["name"].lower() or q.lower() in t["place_name"].lower()
+    ]
+
+# ── Auth ─────────────────────────────────
 @app.route("/", methods=["GET", "POST"])
 def login():
     error = None
@@ -71,30 +121,21 @@ def login_required(f):
         return f(*args, **kwargs)
     return wrapper
 
-# ── Pages ─────────────────────────────────
+# ── Pages ───────────────────────────────
 
 @app.route("/home")
 @login_required
 def home():
     gender_filter = request.args.get("filter", "All")
 
-    places = get_places()
+    data = get_all_toilets()
 
-    if not USE_API:
-        # filter mock
-        filtered = []
-        for p in places:
-            toilets = [
-                t for t in p["toilets"]
-                if gender_filter == "All" or t["gender"] == gender_filter
-            ]
-            if toilets:
-                filtered.append({**p, "toilets": toilets})
-        places = filtered
+    if gender_filter != "All":
+        data = [t for t in data if t["gender"] == gender_filter]
 
     return render_template("home.html",
         user=session["user"],
-        places=places,
+        toilets=data,
         gender_filter=gender_filter,
         last_updated=_last_updated,
         maps_url=maps_url,
@@ -108,19 +149,13 @@ def home():
 @app.route("/search")
 @login_required
 def search():
-    q = request.args.get("q", "").strip().lower()
+    q = request.args.get("q", "").strip()
     gender = request.args.get("filter", "All")
 
-    data = get_all_toilets()
+    results = search_toilets(q)
 
-    if not USE_API:
-        results = [
-            t for t in data
-            if (q == "" or q in t["name"].lower() or q in t["place_name"].lower())
-            and (gender == "All" or t["gender"] == gender)
-        ]
-    else:
-        results = data
+    if gender != "All":
+        results = [t for t in results if t["gender"] == gender]
 
     return render_template("search.html",
         user=session["user"],
@@ -138,9 +173,8 @@ def search():
 @app.route("/detail/<int:tid>")
 @login_required
 def detail(tid):
-    data = get_all_toilets()
+    toilet = get_toilet(tid)
 
-    toilet = next((x for x in data if x["id"] == tid), None)
     if not toilet:
         return redirect(url_for("home"))
 
@@ -171,22 +205,6 @@ def profile():
         last_updated=_last_updated,
     )
 
-# ── Mock API (ใช้ตอนยังไม่มี backend) ─────────
-
-@app.route("/api/refresh", methods=["POST"])
-@login_required
-def api_refresh():
-    global _last_updated
-    if USE_API:
-        return jsonify(ok=True)
-
-    for p in _places:
-        for t in p["toilets"]:
-            t["occupancy"] = max(0, min(100, t["occupancy"] + random.randint(-9, 9)))
-
-    _last_updated = datetime.now().strftime("%H:%M:%S")
-    return jsonify(ok=True)
-
-# ── Run ──────────────────────────────────
+# ── Run ─────────────────────────────────
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
