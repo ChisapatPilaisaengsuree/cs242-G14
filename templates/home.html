@@ -7,7 +7,7 @@
 <div class="header-row">
   <div>
     <div class="pg-title">🗺️ แผนที่ห้องน้ำ</div>
-    <div class="pg-sub">{{ place_count }} อาคาร · {{ all_count }} ห้องน้ำ</div>
+    <div class="pg-sub">{{ toilets|length }} ห้องน้ำ</div>
   </div>
   <button class="refresh-btn" onclick="doRefresh()">
     <span id="spin-i">🔄</span> รีเฟรชข้อมูล
@@ -22,41 +22,40 @@
   <a href="{{ url_for('home', filter='Disabled') }}" class="chip dis {% if gender_filter == 'Disabled' %}active{% endif %}">♿ คนพิการ</a>
 </div>
 
-<!-- Place cards grid -->
+<!-- Toilet list -->
 <div class="place-grid">
-{% for p in places %}
-  {% set min_occ = p.toilets | map(attribute='occupancy') | min %}
-  {% set min_dist = p.toilets | map(attribute='distance') | min %}
-  {% set bc = get_status_color(min_occ) %}
+{% for t in toilets %}
+  {% set gc = get_gender_color(t.gender) %}
+  {% set gi = get_gender_icon(t.gender) %}
+  {% set gl = get_gender_label(t.gender) %}
+  {% set sc = get_status_color(t.occupancy) %}
+  {% set sl = get_status_label(t.occupancy) %}
   <div class="place-card">
     <div class="place-head">
       <div>
-        <div class="place-name">{{ p.name }}</div>
+        <div class="place-name">{{ t.name }}</div>
         <div class="place-meta">
-          <span style="color:{{ bc }};font-size:9px">●</span>
-          {{ p.toilets|length }} ห้องน้ำ · {{ min_dist }} ม.
+          <span style="color:{{ sc }};font-size:9px">●</span>
+          {{ t.place_name }}
+          {% if t.floor %} · ชั้น {{ t.floor }}{% endif %}
         </div>
       </div>
-      <a href="{{ maps_url(p.lat, p.lng) }}" target="_blank" class="maps-btn">📍 Maps</a>
+      <a href="{{ maps_url(t.lat, t.lng) }}" target="_blank" class="maps-btn">📍 Maps</a>
     </div>
     <div class="hdiv"></div>
     <div class="tlist">
-      {% for t in p.toilets %}
-        {% set gc = get_gender_color(t.gender) %}
-        {% set gi = get_gender_icon(t.gender) %}
-        {% set sc = get_status_color(t.occupancy) %}
-        {% set sl = get_status_label(t.occupancy) %}
-        <a href="{{ url_for('detail', tid=t.id) }}" class="trow">
-          <div class="t-icon" style="background:{{ gc }}15;border:1.5px solid {{ gc }}33;color:{{ gc }}">{{ gi }}</div>
-          <div class="t-info">
-            <div class="t-name">{{ t.name }}</div>
-            <div class="t-meta">{{ t.floor }} · {{ t.distance }} ม. · <span style="color:{{ sc }};font-weight:700">{{ sl }}</span></div>
-            <div class="occ-wrap"><div class="occ-bar" style="width:{{ t.occupancy }}%;background:{{ sc }}"></div></div>
-            <div class="occ-pct">{{ t.occupancy }}% ถูกใช้งาน</div>
+      <a href="{{ url_for('detail', tid=t.id) }}" class="trow">
+        <div class="t-icon" style="background:{{ gc }}15;border:1.5px solid {{ gc }}33;color:{{ gc }}">{{ gi }}</div>
+        <div class="t-info">
+          <div class="t-name">{{ gi }} {{ gl }}</div>
+          <div class="t-meta">
+            <span style="color:{{ sc }};font-weight:700">{{ sl }}</span>
           </div>
-          <span class="badge" style="background:{{ sc }}18;color:{{ sc }};border:1.5px solid {{ sc }}44">{{ sl }}</span>
-        </a>
-      {% endfor %}
+          <div class="occ-wrap"><div class="occ-bar" style="width:{{ t.occupancy }}%;background:{{ sc }}"></div></div>
+          <div class="occ-pct">{{ t.occupancy }}% ถูกใช้งาน</div>
+        </div>
+        <span class="badge" style="background:{{ sc }}18;color:{{ sc }};border:1.5px solid {{ sc }}44">{{ sl }}</span>
+      </a>
     </div>
   </div>
 {% else %}
@@ -72,10 +71,8 @@
 <script>
 function doRefresh() {
   var ic = document.getElementById('spin-i');
-  ic.style.display = 'inline-block';
   ic.classList.add('spin');
-  fetch('/api/refresh', {method:'POST'})
-    .then(function(){ setTimeout(function(){ location.reload(); }, 400); });
+  setTimeout(function(){ location.reload(); }, 400);
 }
 </script>
 {% endblock %}

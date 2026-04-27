@@ -12,11 +12,9 @@ from data.mock_data import (
 app = Flask(__name__)
 app.secret_key = "toiletfinder-secret-2024"
 
-# ใช้ backend จริง
 USE_API = True
 API_URL = "http://localhost:8000/api"
 
-# ── mock fallback ─────────────────────────
 _places = [
     {**p, "toilets": [{**t} for t in p["toilets"]]}
     for p in PLACES
@@ -29,36 +27,42 @@ def flat():
 def maps_url(lat, lng):
     return f"https://www.google.com/maps/dir/?api=1&destination={lat},{lng}&travelmode=walking"
 
-# ── FIX สำคัญอยู่ตรงนี้ ─────────────────
 def convert_crowd(level):
-    return {
-        "low": 20,
-        "medium": 50,
-        "high": 80
-    }.get(level, 0)
+    return {"low": 20, "medium": 55, "high": 85}.get(str(level).lower(), 0)
 
 def map_data(data):
     result = []
     for x in data:
-        # รองรับทั้ง crowd_level และ crowd
-        crowd = x.get("crowd_level") or x.get("crowd") or "low"
+        crowd     = x.get("crowd_level") or x.get("crowd") or "low"
+        floor     = x.get("floor", "")
+        gender_raw = x.get("type", "").lower()
+        gender_map = {
+            "male":     "Male",
+            "female":   "Female",
+            "disabled": "Disabled",
+            "unisex":   "Disabled",
+        }
+        gender = gender_map.get(gender_raw, gender_raw.capitalize() or "Male")
 
         result.append({
-            "id": x["id"],
-            "name": f"{x['building']} ชั้น {x['floor']}",
+            "id":         x["id"],
+            "name":       f"{x['building']} ชั้น {floor}",
             "place_name": x["building"],
-            "gender": x["type"],
-            "occupancy": convert_crowd(crowd),
-            "lat": x["latitude"],
-            "lng": x["longitude"]
+            "floor":      f"ชั้น {floor}" if floor else "-",
+            "gender":     gender,
+            "occupancy":  convert_crowd(crowd),
+            "capacity":   x.get("capacity", 6),
+            "distance":   x.get("distance", 0),
+            "lat":        x.get("latitude", 0),
+            "lng":        x.get("longitude", 0),
         })
     return result
 
-# ── helper ───────────────────────────────
+# ── helpers ───────────────────────────────────────────────
 def get_all_toilets():
     if USE_API:
         try:
-            res = requests.get(f"{API_URL}/restrooms")
+            res = requests.get(f"{API_URL}/restrooms", timeout=5)
             return map_data(res.json())
         except Exception as e:
             print("API error:", e)
@@ -68,43 +72,40 @@ def get_all_toilets():
 def get_toilet(tid):
     if USE_API:
         try:
-            res = requests.get(f"{API_URL}/restrooms/{tid}")
+            res = requests.get(f"{API_URL}/restrooms/{tid}", timeout=5)
+            if res.status_code == 404:
+                return None
             return map_data([res.json()])[0]
         except Exception as e:
             print("Detail error:", e)
             return None
-    data = flat()
-    return next((x for x in data if x["id"] == tid), None)
+    return next((x for x in flat() if x["id"] == tid), None)
 
 def search_toilets(q):
     if USE_API:
         try:
-            res = requests.post(f"{API_URL}/search", json={"keyword": q})
+            res = requests.post(f"{API_URL}/search", json={"keyword": q}, timeout=5)
             return map_data(res.json())
         except Exception as e:
             print("Search error:", e)
             return []
-    data = flat()
-    return [
-        t for t in data
-        if q.lower() in t["name"].lower() or q.lower() in t["place_name"].lower()
-    ]
+    return [t for t in flat()
+            if q.lower() in t["name"].lower() or q.lower() in t["place_name"].lower()]
 
-# ── Auth ─────────────────────────────────
+# ── Auth ──────────────────────────────────────────────────
 @app.route("/", methods=["GET", "POST"])
 def login():
     error = None
     if request.method == "POST":
-        email = request.form.get("email", "").strip()
+        email    = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
         user = next((u for u in USERS if u["email"] == email and u["password"] == password), None)
         if user:
-            session["user"] = user
+            session["user"]      = user
             session["favorites"] = []
-            session["ratings"] = {}
+            session["ratings"]   = {}
             return redirect(url_for("home"))
-        else:
-            error = "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+        error = "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
     return render_template("login.html", error=error)
 
 @app.route("/logout")
@@ -121,18 +122,15 @@ def login_required(f):
         return f(*args, **kwargs)
     return wrapper
 
-# ── Pages ───────────────────────────────
-
+# ── Pages ─────────────────────────────────────────────────
 @app.route("/home")
 @login_required
 def home():
+    global _last_updated
     gender_filter = request.args.get("filter", "All")
-
     data = get_all_toilets()
-
     if gender_filter != "All":
         data = [t for t in data if t["gender"] == gender_filter]
-
     return render_template("home.html",
         user=session["user"],
         toilets=data,
@@ -149,10 +147,20 @@ def home():
 @app.route("/search")
 @login_required
 def search():
-    q = request.args.get("q", "").strip()
+    q      = request.args.get("q", "").strip()
     gender = request.args.get("filter", "All")
 
-    results = search_toilets(q)
+    # ดึงข้อมูลทั้งหมดก่อน แล้วค่อย filter ใน Python
+    all_data = get_all_toilets()
+
+    if q:
+        ql = q.lower()
+        results = [
+            t for t in all_data
+            if ql in t["name"].lower() or ql in t["place_name"].lower()
+        ]
+    else:
+        results = all_data
 
     if gender != "All":
         results = [t for t in results if t["gender"] == gender]
@@ -174,13 +182,10 @@ def search():
 @login_required
 def detail(tid):
     toilet = get_toilet(tid)
-
     if not toilet:
         return redirect(url_for("home"))
-
-    favs = session.get("favorites", [])
+    favs    = session.get("favorites", [])
     ratings = session.get("ratings", {})
-
     return render_template("detail.html",
         user=session["user"],
         toilet=toilet,
@@ -205,6 +210,33 @@ def profile():
         last_updated=_last_updated,
     )
 
-# ── Run ─────────────────────────────────
+# ── API actions ───────────────────────────────────────────
+@app.route("/api/refresh", methods=["POST"])
+@login_required
+def api_refresh():
+    global _last_updated
+    _last_updated = datetime.now().strftime("%H:%M:%S")
+    return jsonify(ok=True)
+
+@app.route("/api/favorite/<int:tid>", methods=["POST"])
+@login_required
+def api_favorite(tid):
+    favs = session.get("favorites", [])
+    if tid in favs:
+        favs.remove(tid); added = False
+    else:
+        favs.append(tid); added = True
+    session["favorites"] = favs
+    return jsonify(ok=True, added=added)
+
+@app.route("/api/rate/<int:tid>", methods=["POST"])
+@login_required
+def api_rate(tid):
+    star    = int(request.json.get("star", 0))
+    ratings = session.get("ratings", {})
+    ratings[str(tid)] = star
+    session["ratings"] = ratings
+    return jsonify(ok=True)
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
