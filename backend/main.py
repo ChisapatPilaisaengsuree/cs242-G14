@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # import router ก่อน
-from api.search import router as search_router
-from api.restroom import router as restroom_router
+from backend.api.search import router as search_router
+from backend.api.restroom import router as restroom_router
 
 # สร้าง app ก่อน
 app = FastAPI(
@@ -29,7 +29,7 @@ app.include_router(restroom_router, prefix="/api")
 # startup
 @app.on_event("startup")
 def startup_event():
-    from database.init_db import init_db
+    from backend.database.init_db import init_db
     init_db()
 
 

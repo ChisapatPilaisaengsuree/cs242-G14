@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from schemas.search_schema import SearchRequest
-from services.search_service import search_restrooms
+from backend.schemas.search_schema import SearchRequest
+from backend.services.search_service import search_restrooms
 
 router = APIRouter()
 

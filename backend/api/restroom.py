@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from services.search_service import calculate_distance
-from database.db import get_db
-from models.restroom import Restroom
+from backend.services.search_service import calculate_distance
+from backend.database.db import get_db
+from backend.models.restroom import Restroom
 
 router = APIRouter()
 

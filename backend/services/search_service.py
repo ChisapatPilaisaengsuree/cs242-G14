@@ -1,7 +1,7 @@
-from database.db import SessionLocal
-from models.restroom import Restroom
-from services.ml_model import smart_search, predict_crowd
-from services.ranking import rank_results
+from backend.database.db import SessionLocal
+from backend.models.restroom import Restroom
+from backend.services.ml_model import smart_search, predict_crowd
+from backend.services.ranking import rank_results
 import math
 
 def calculate_distance(lat1, lon1, lat2, lon2):
