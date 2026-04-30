@@ -1,11 +1,33 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from backend.services.search_service import calculate_distance
 from backend.database.db import get_db
 from backend.models.restroom import Restroom
+<<<<<<< HEAD
 from backend.schemas.restroom_schema import RestroomUpdate, RestroomResponse
+=======
+from backend.schemas.search_schema import RestroomCreate, RestroomResponse
+>>>>>>> backend/PersistentStorage
 
 router = APIRouter()
+
+@router.post("/restrooms", response_model=RestroomResponse, status_code=status.HTTP_201_CREATED)
+def create_restroom(data: RestroomCreate, db: Session = Depends(get_db)):
+    restroom = Restroom(
+        building=data.building,
+        floor=data.floor,
+        type=data.type,
+        latitude=data.latitude,
+        longitude=data.longitude,
+        crowd_level=data.crowd_level or "low",
+    )
+    db.add(restroom)
+    db.commit()
+    db.refresh(restroom)
+    return restroom
+
 
 @router.get("/restrooms/nearest")
 def get_nearest_restroom(lat: float, lng: float, db: Session = Depends(get_db)):
@@ -32,9 +54,23 @@ def get_nearest_restroom(lat: float, lng: float, db: Session = Depends(get_db)):
 
 
 @router.get("/restrooms")
-def get_all_restrooms(db: Session = Depends(get_db)):
-    """ดึงรายการห้องน้ำทั้งหมด"""
-    restrooms = db.query(Restroom).all()
+def get_all_restrooms(
+    building: Optional[str] = None,
+    floor: Optional[int] = None,
+    restroom_type: Optional[str] = Query(None, alias="type"),
+    db: Session = Depends(get_db),
+):
+    """ดึงรายการห้องน้ำทั้งหมด และสามารถกรองตาม building/floor/type ได้"""
+    query = db.query(Restroom)
+
+    if building:
+        query = query.filter(Restroom.building == building)
+    if floor is not None:
+        query = query.filter(Restroom.floor == floor)
+    if restroom_type:
+        query = query.filter(Restroom.type == restroom_type)
+
+    restrooms = query.all()
     return [
         {
             "id": r.id,

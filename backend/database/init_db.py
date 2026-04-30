@@ -42,6 +42,11 @@ def init_db():
             # --- SC2 ---
             Restroom(building="SC2", floor=1, type="male",     latitude=14.0698, longitude=100.6052, crowd_level="high"),
             Restroom(building="SC2", floor=3, type="female",   latitude=14.0698, longitude=100.6052, crowd_level="low"),
+
+            # --- SC1 ---
+            Restroom(building="SC1", floor=1, type="mixed",    latitude=14.0690, longitude=100.6049, crowd_level="high"),
+            Restroom(building="SC1", floor=2, type="female",   latitude=14.0690, longitude=100.6049, crowd_level="medium"),
+            Restroom(building="SC1", floor=3, type="male",     latitude=14.0690, longitude=100.6049, crowd_level="low"),
         ]
 
         db.add_all(sample_data)
