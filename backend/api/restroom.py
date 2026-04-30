@@ -5,11 +5,9 @@ from sqlalchemy.orm import Session
 from backend.services.search_service import calculate_distance
 from backend.database.db import get_db
 from backend.models.restroom import Restroom
-<<<<<<< HEAD
-from backend.schemas.restroom_schema import RestroomUpdate, RestroomResponse
-=======
-from backend.schemas.search_schema import RestroomCreate, RestroomResponse
->>>>>>> backend/PersistentStorage
+
+from backend.schemas.restroom_schema import RestroomCreate, RestroomUpdate, RestroomResponse
+
 
 router = APIRouter()
 
