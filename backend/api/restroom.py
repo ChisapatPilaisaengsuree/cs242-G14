@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from backend.services.search_service import calculate_distance
 from backend.database.db import get_db
 from backend.models.restroom import Restroom
+from backend.schemas.restroom_schema import RestroomUpdate, RestroomResponse
 
 router = APIRouter()
 
@@ -63,3 +64,20 @@ def get_restroom_detail(restroom_id: int, db: Session = Depends(get_db)):
         "longitude": r.longitude,
         "crowd_level": r.crowd_level,
     }
+
+
+@router.put("/restrooms/{restroom_id}", response_model=RestroomResponse)
+def update_restroom(restroom_id: int, restroom_update: RestroomUpdate, db: Session = Depends(get_db)):
+    """แก้ไขข้อมูลห้องน้ำตาม ID"""
+    r = db.query(Restroom).filter(Restroom.id == restroom_id).first()
+    if not r:
+        raise HTTPException(status_code=404, detail="ไม่พบห้องน้ำที่ระบุ")
+
+    # อัปเดตเฉพาะฟิลด์ที่ส่งมา
+    update_data = restroom_update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(r, field, value)
+
+    db.commit()
+    db.refresh(r)
+    return r
