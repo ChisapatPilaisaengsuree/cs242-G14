@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from backend.services.search_service import calculate_distance
 from backend.database.db import get_db
 from backend.models.restroom import Restroom
+from backend.schemas.search_schema import RestroomCreate, RestroomResponse
 
 router = APIRouter()
 
@@ -63,3 +64,20 @@ def get_restroom_detail(restroom_id: int, db: Session = Depends(get_db)):
         "longitude": r.longitude,
         "crowd_level": r.crowd_level,
     }
+
+
+@router.post("/restrooms", response_model=RestroomResponse)
+def create_restroom(data: RestroomCreate, db: Session = Depends(get_db)):
+    """สร้างห้องน้ำใหม่"""
+    new_restroom = Restroom(
+        building=data.building,
+        floor=data.floor,
+        type=data.type,
+        latitude=data.latitude,
+        longitude=data.longitude,
+        crowd_level=data.crowd_level,
+    )
+    db.add(new_restroom)
+    db.commit()
+    db.refresh(new_restroom)
+    return new_restroom
