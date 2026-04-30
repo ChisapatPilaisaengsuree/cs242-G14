@@ -19,22 +19,22 @@ render_sidebar()
 if 'rooms_sc2' not in st.session_state:
     st.session_state.rooms_sc2 = [
         {
-            "name": "SC2 - ชั้น1 - ชาย", 
-            "gender": "♂ ชาย", 
-            "usage": 95, 
+            "name": "SC2 - ชั้น1 - หญิง", 
+            "gender": "♀ หญิง", 
+            "usage": 10, 
             "cap": "10 ที่", 
-            "status": "เต็ม", 
-            "color": "#c62828", # สีแดง
+            "status": "ว่าง", 
+            "color": "#2e7d32", # สีเขียว
             "bg": "#ffebee"
         },
         {
-            "name": "SC2 - ชั้น3 - หญิง", 
-            "gender": "♀ หญิง", 
-            "usage": 10, 
+            "name": "SC2 - ชั้น3 - ชาย", 
+            "gender": "♂ ชาย", 
+            "usage": 95, 
             "cap": "6 ที่", 
-            "status": "ว่าง", 
-            "color": "#2e7d32", # สีเขียว
-            "bg": "#e8f5e9"
+            "status": "เต็ม", 
+            "color": "#c62828", # สีแดง
+            "bg": "#ffebee"
         }
     ]
 

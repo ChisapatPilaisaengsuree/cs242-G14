@@ -19,13 +19,49 @@ render_sidebar()
 if 'rooms_sc3' not in st.session_state:
     st.session_state.rooms_sc3 = [
         {
-            "name": "SC3 - ชั้น1 - หญิง", 
+            "name": "SC2 - ชั้น1 - หญิง", 
             "gender": "♀ หญิง", 
-            "usage": 5, 
+            "usage": 10, 
             "cap": "8 ที่", 
             "status": "ว่าง", 
-            "color": "#2e7d32", # สีแดง
+            "color": "#2e7d32", # สีเขียว
+            "bg": "#ffebee"
+        },
+        {
+            "name": "SC2 - ชั้น1 - ชาย", 
+            "gender": "♂ ชาย", 
+            "usage": 95, 
+            "cap": "8 ที่", 
+            "status": "เต็ม", 
+            "color": "#c62828", # สีแดง
+            "bg": "#ffebee"
+        },
+        {
+            "name": "SC2 - ชั้น2 - หญิง", 
+            "gender": "♀ หญิง", 
+            "usage": 10, 
+            "cap": "8 ที่", 
+            "status": "ว่าง", 
+            "color": "#2e7d32", # สีเขียว
             "bg": "#e8f5e9"
+        },
+        {
+            "name": "SC2 - ชั้น2 - ชาย", 
+            "gender": "♂ ชาย", 
+            "usage": 10, 
+            "cap": "6 ที่", 
+            "status": "ว่าง", 
+            "color": "#2e7d32", # สีเขียว
+            "bg": "#e8f5e9"
+        },
+        {
+            "name": "SC2 - ชั้น1 - คนพิการ", 
+             
+            "usage": 95, 
+            "cap": "2 ที่", 
+            "status": "เต็ม", 
+            "color": "#c62828", # สีแดง
+            "bg": "#ffebee"
         }
     ]
 
