@@ -25,7 +25,7 @@ if 'rooms_sc3' not in st.session_state:
             "cap": "8 ที่", 
             "status": "ว่าง", 
             "color": "#2e7d32", # สีเขียว
-            "bg": "#ffebee"
+            "bg": "#e8f5e9"
         },
         {
             "name": "SC2 - ชั้น1 - ชาย", 
@@ -56,7 +56,7 @@ if 'rooms_sc3' not in st.session_state:
         },
         {
             "name": "SC2 - ชั้น1 - คนพิการ", 
-             
+            "gender": "🚻 รวม",
             "usage": 95, 
             "cap": "2 ที่", 
             "status": "เต็ม", 
