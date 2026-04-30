@@ -25,7 +25,7 @@ if 'rooms_sc2' not in st.session_state:
             "cap": "10 ที่", 
             "status": "ว่าง", 
             "color": "#2e7d32", # สีเขียว
-            "bg": "#ffebee"
+            "bg": "#e8f5e9"
         },
         {
             "name": "SC2 - ชั้น3 - ชาย", 
