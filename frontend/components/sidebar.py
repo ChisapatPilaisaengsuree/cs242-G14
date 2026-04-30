@@ -12,9 +12,8 @@ def render_sidebar():
         st.page_link("pages/reports.py", label="รายงาน")
         
         st.markdown("**อาคาร**")
-        st.page_link("pages/sc1.py", label="SC1")
         st.page_link("pages/sc2.py", label="SC2")
         st.page_link("pages/sc3.py", label="SC3")
         st.page_link("pages/gym7.py", label="ยิม7")
-        st.page_link("pages/boro.py", label="บร")
+        st.page_link("pages/boro5.py", label="บร5")
             

@@ -16,15 +16,32 @@ inject_custom_css()
 render_sidebar()
 
 # --- แก้ไขจุดนี้: ใช้ Session State แทนการสร้างตัวแปร rooms ปกติ ---
-if 'rooms_sc1' not in st.session_state:
-    st.session_state.rooms_sc1 = [
-        {"name": "SC1 - ชั้น1 - รวม", "gender": " รวม", "usage": 100, "cap": "2 ที่", "status": "เต็ม", "color": "#c62828", "bg": "#ffebee"}
+if 'rooms_boro' not in st.session_state:
+    st.session_state.rooms_boro = [
+        {
+            "name": "บร5 - ชั้น1 - ชาย", 
+            "gender": "♂ ชาย", 
+            "usage": 72, 
+            "cap": "10 ที่", 
+            "status": "ค่อนข้างเต็ม", 
+            "color": "#ef6c00", # สีส้ม
+            "bg": "#fff3e0"
+        },
+        {
+            "name": "บร5 - ชั้น2 - หญิง", 
+            "gender": "♀ หญิง", 
+            "usage": 60, 
+            "cap": "6 ที่", 
+            "status": "ค่อนข้างเต็ม", 
+            "color": "#ef6c00", # สีส้ม
+            "bg": "#fff3e0"
+        }
     ]
 
 # --- ส่วนหัว (Header) ---
 col_h1, col_h2 = st.columns([5, 4])
 with col_h1:
-    st.markdown("<div style='font-size: 24px; font-weight: bold; margin-top: 20px; margin-bottom: -5px;'>อาคาร SC1</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size: 24px; font-weight: bold; margin-top: 20px; margin-bottom: -5px;'>บร</div>", unsafe_allow_html=True)
     st.caption("วันอาทิตย์ที่ 26 เมษายน 2569")
 
 with col_h2:
@@ -35,10 +52,10 @@ st.write("")
 # --- ส่วนสรุป (Metric Cards) ---
 m1, m2, m3, m4 = st.columns(4)
 metrics = [
-    {"label": "ว่าง", "val": "0", "unit": "ห้อง", "color": "#2e7d32"},
-    {"label": "ค่อนข้างเต็ม", "val": "0", "unit": "ห้อง", "color": "#ef6c00"},
-    {"label": "เต็ม", "val": "1", "unit": "ห้อง", "color": "#c62828"},
-    {"label": "เฉลี่ยการใช้งาน", "val": "100%", "unit": "วันนี้", "color": "#111"},
+    {"label": "ว่าง", "val": "1", "unit": "ห้อง", "color": "#2e7d32"},
+    {"label": "ค่อนข้างเต็ม", "val": "1", "unit": "ห้อง", "color": "#ef6c00"},
+    {"label": "เต็ม", "val": "0", "unit": "ห้อง", "color": "#c62828"},
+    {"label": "เฉลี่ยการใช้งาน", "val": "50%", "unit": "วันนี้", "color": "#111"},
 ]
 
 for i, m in enumerate([m1, m2, m3, m4]):
@@ -89,7 +106,7 @@ with col_tool2:
                 }
                 
                 # 3. เพิ่มลงใน Session State
-                st.session_state.rooms_sc1.append(new_room)
+                st.session_state.rooms_boro.append(new_room)
                 
                 st.success(f"เพิ่ม {new_name} เรียบร้อยแล้ว!")
                 # 4. สั่ง Rerun เพื่อให้หน้าจออัปเดตข้อมูลใหม่ทันที
@@ -101,7 +118,8 @@ st.write("")
 # --- ตารางแสดงรายการห้องน้ำ ---
 # จำลองข้อมูล
 rooms = [
-    {"name": "SC1 - ชั้น1 - รวม", "gender": " รวม", "usage": 100, "cap": "2 ที่", "status": "เต็ม", "color": "#c62828", "bg": "#ffebee"}
+    {"name": "บร - ชั้น1 - ชาย", "gender": "♂ ชาย", "usage": 72, "cap": "6 ที่", "status": "ค่อนข้างเต็ม", "color": "#ef6c00", "bg": "#fff3e0"},
+    {"name": "บร - ชั้น2 - หญิง", "gender": "♀ หญิง", "usage": 20, "cap": "6 ที่", "status": "ว่าง", "color": "#2e7d32", "bg": "#e8f5e9"}
 ]
 
 # ส่วนหัวตาราง
@@ -113,7 +131,7 @@ for i, head in enumerate(t_col):
 st.divider()
 
 # ข้อมูลในตาราง
-for room in st.session_state.rooms_sc1:  # ใช้ข้อมูลจาก Session State
+for room in st.session_state.rooms_boro:  # ใช้ข้อมูลจาก Session State
     r_col = st.columns([3, 1.5, 3, 1.5, 1.5])
     r_col[0].write(room['name'])
     r_col[1].markdown(f"<span style='background: #f3f4f6; padding: 2px 8px; border-radius: 5px; font-size: 13px;'>{room['gender']}</span>", unsafe_allow_html=True)

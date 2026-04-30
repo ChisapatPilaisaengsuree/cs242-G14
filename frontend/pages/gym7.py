@@ -19,22 +19,22 @@ render_sidebar()
 if 'rooms_gym7' not in st.session_state:
     st.session_state.rooms_gym7 = [
         {
-            "name": "ยิม7 - ชาย", 
-            "gender": "♂ ชาย", 
-            "usage": 60, 
-            "cap": "8 ที่", 
-            "status": "ค่อนข้างเต็ม", 
-            "color": "#ef6c00", # สีส้ม
-            "bg": "#fff3e0"
-        },
-        {
-            "name": "ยิม7 - หญิง", 
+            "name": "ยิม7 - ชั้น1 - หญิง", 
             "gender": "♀ หญิง", 
             "usage": 39, 
             "cap": "6 ที่", 
             "status": "ว่าง", 
             "color": "#2e7d32", # สีเขียว
             "bg": "#e8f5e9"
+        },
+        {
+            "name": "ยิม7 - ชั้น1 - ชาย", 
+            "gender": "♂ ชาย", 
+            "usage": 60, 
+            "cap": "6 ที่", 
+            "status": "ค่อนข้างเต็ม", 
+            "color": "#ef6c00", # สีส้ม
+            "bg": "#fff3e0"
         }
     ]
 
