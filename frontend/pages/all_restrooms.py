@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import sys
+import requests
 from pathlib import Path
 from datetime import datetime
 
@@ -13,28 +14,82 @@ if root not in sys.path:
 try:
     from components.card import inject_custom_css
     from components.sidebar import render_sidebar
+    from components.edit_modal import show_edit_button
 except ImportError:
     st.error("ยังหาโฟลเดอร์ components ไม่เจอ ตรวจสอบการวางไฟล์อีกครั้งนะครับ")
+
+# --- API Configuration ---
+API_BASE_URL = "http://localhost:8000/api"
 
 # --- สร้างสถานะการเลือก Filter (ถ้ายังไม่มีให้เป็น 'ทั้งหมด') ---
 if 'gender_filter' not in st.session_state:
     st.session_state.gender_filter = "ทั้งหมด"
+
+if 'edit_modal_open' not in st.session_state:
+    st.session_state.edit_modal_open = False
+
+if 'editing_id' not in st.session_state:
+    st.session_state.editing_id = None
+
+if 'editing_data' not in st.session_state:
+    st.session_state.editing_data = None
+
+if 'need_refresh' not in st.session_state:
+    st.session_state.need_refresh = False
 
 # เรียกใช้งาน
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 inject_custom_css()
 render_sidebar()
 
-# --- ข้อมูลจำลอง ---
-data = [
-    {"name": "SC1 - ชั้น1 - รวม", "loc": "SC1 · ชั้น 1", "gender": "รวม", "usage": 100, "status": "เต็ม"},
-    {"name": "SC2 - ชั้น1 - ชาย", "loc": "SC2 · ชั้น 1", "gender": "ชาย", "usage": 95, "status": "เต็ม"},
-    {"name": "บร - ชั้น1 - ชาย", "loc": "บร · ชั้น 1", "gender": "ชาย", "usage": 72, "status": "ค่อนข้างเต็ม"},
-    {"name": "ยิม7 - ชาย", "loc": "ยิม7 · ชั้น 1", "gender": "ชาย", "usage": 60, "status": "ค่อนข้างเต็ม"},
-    {"name": "ยิม7 - หญิง", "loc": "ยิม7 · ชั้น 1", "gender": "หญิง", "usage": 39, "status": "ว่าง"},
-    {"name": "บร - ชั้น2 - หญิง", "loc": "บร · ชั้น 2", "gender": "หญิง", "usage": 20, "status": "ว่าง"},
-]
-df = pd.DataFrame(data)
+# --- ฟังก์ชันสำหรับดึงข้อมูลห้องน้ำจาก API ---
+@st.cache_data
+def fetch_restrooms():
+    """ดึงข้อมูลห้องน้ำทั้งหมดจาก API"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/restrooms", timeout=5)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            st.error(f"❌ ไม่สามารถดึงข้อมูลห้องน้ำได้: {response.status_code}")
+            return []
+    except requests.exceptions.RequestException as e:
+        st.error(f"❌ ไม่สามารถเชื่อมต่อ API: {str(e)}")
+        return []
+
+# แหล่งข้อมูลจาก API
+api_data = fetch_restrooms()
+
+# แปลงเป็น DataFrame พร้อม mapping ข้อมูล
+def parse_api_data(api_data):
+    """แปลงข้อมูลจาก API เป็น DataFrame ที่เหมาะสมสำหรับแสดงผล"""
+    type_map = {"male": "ชาย", "female": "หญิง", "disabled": "พิการ", "unisex": "รวม"}
+    crowd_map = {"low": 20, "medium": 55, "high": 85}
+    status_map = {20: "ว่าง", 55: "ค่อนข้างเต็ม", 85: "เต็ม"}
+    
+    data = []
+    for r in api_data:
+        gender = type_map.get(r.get("type", "male"), r.get("type", "")).upper() if r.get("type") != "unisex" else "รวม"
+        usage = crowd_map.get(r.get("crowd_level", "low"), 20)
+        status = status_map.get(usage, "ไม่ทราบ")
+        
+        data.append({
+            "id": r.get("id"),
+            "name": f"{r.get('building')} ชั้น {r.get('floor')}",
+            "loc": f"{r.get('building')} · ชั้น {r.get('floor')}",
+            "gender": gender,
+            "type": r.get("type"),
+            "usage": usage,
+            "status": status,
+            "building": r.get("building"),
+            "floor": r.get("floor"),
+            "latitude": r.get("latitude"),
+            "longitude": r.get("longitude"),
+            "crowd_level": r.get("crowd_level"),
+        })
+    return pd.DataFrame(data) if data else pd.DataFrame()
+
+df = parse_api_data(api_data)
 
 # --- ส่วนหัวและฟิลเตอร์ ---
 col_t1, col_t2 = st.columns([5, 4]) 
@@ -116,3 +171,14 @@ for i, (index, row) in enumerate(display_df.iterrows()): # ใช้ display_df
         </div>
         """
         st.markdown(card_html, unsafe_allow_html=True)
+        
+        # เพิ่มปุ่มแก้ไข
+        restroom_data = {
+            "building": row["building"],
+            "floor": row["floor"],
+            "type": row["type"],
+            "latitude": row["latitude"],
+            "longitude": row["longitude"],
+            "crowd_level": row["crowd_level"]
+        }
+        show_edit_button(row["id"], restroom_data)
